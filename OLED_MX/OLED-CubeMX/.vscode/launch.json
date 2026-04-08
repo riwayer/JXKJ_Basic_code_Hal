@@ -1,0 +1,51 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/Debug/OLED-CubeMX.elf",
+            "name": "Debug with OpenOCD",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "configFiles": [
+                "E:/BaiduNetdiskDownload/MCU/xpack-openocd-0.12.0-7-win32-x64/xpack-openocd-0.12.0-7/openocd/scripts/interface/stlink-v2.cfg",
+                "E:/BaiduNetdiskDownload/MCU/xpack-openocd-0.12.0-7-win32-x64/xpack-openocd-0.12.0-7/openocd/scripts/target/stm32f1x.cfg",
+            ],
+            "gdbPath": "arm-none-eabi-gdb",
+            "overrideLaunchCommands": [
+                "monitor reset halt" ,
+                "load",
+            ],
+            "searchDir": [],
+            "runToEntryPoint": "main",
+            "showDevDebugOutput": "none"
+        },
+        {
+            "type": "stlinkgdbtarget",
+            "request": "launch",
+            "name": "STM32Cube: Launch ST-Link GDB Server",
+            "origin": "snippet",
+            "cwd": "${workspaceFolder}",
+            "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+            "runEntry": "main",
+            "imagesAndSymbols": [
+                {
+                    "imageFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}"
+                }
+            ]
+        },
+        {
+            "name": "Cortex Debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "./bin/executable.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "jlink"
+        }
+    ]
+}
