@@ -28,6 +28,7 @@
 #include "PWM.h"
 #include <stdint.h>
 #include "IC.h"
+#include "Encoder.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,7 +49,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+  int16_t Speed;
+  int16_t Encoder_Count = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,24 +96,34 @@ int main(void)
   MX_TIM3_Init();
   MX_I2C1_Init();
   MX_TIM2_Init();
+  MX_TIM1_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
   PWM_Init();
+  Encoder_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-    OLED_ShowString(0, 0, "pulseWidth:", 6);
-    OLED_ShowString(0, 12, "duty:", 6);
+    HAL_TIM_Base_Init(&htim4);//这个定时器不启动，只用它的中断功能
+
+    // OLED_ShowString(0, 0, "pulseWidth:", 6);
+    // OLED_ShowString(0, 12, "duty:", 6);
+    OLED_ShowString(0, 12, "Speed:", 6);
+    OLED_ShowString(0, 0, "Encoder_Count:", 6);
     // HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
     uint8_t j = 0;
-    OLED_Updata();
+    
   while (1)
   {
-    IC_Run();
+    // IC_Run();
     OLED_ShowNum(0, 24, j++, 3, 6);
-    OLED_ShowFloatNum(80, 0, pulseWidth*1e6f, 3,3, 6);
-    OLED_ShowFloatNum(80, 12, duty*1e6f, 3, 3, 6);
+    OLED_ShowNum(0, 0, Encoder_Count, 3, 6);
+
+    // OLED_ShowFloatNum(80, 0, pulseWidth*1e6f, 3,3, 6);
+    // OLED_ShowFloatNum(80, 12, duty*1e6f, 3, 3, 6);
+    OLED_ShowSignedNum(90, 12, Speed, 5, 6);
     OLED_Updata();
     /* USER CODE END WHILE */
 
@@ -157,7 +169,14 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if (htim->Instance == TIM4) //  是update事件才可以，但tim4只有全局中断，无法在溢出的时候进行中断
+  {
+    Speed = Encoder_Get();	//每当定时器4的周期到达时，就调用Encoder_Get函数获取编码器的增量值，并把它赋值给Speed变量
+    Encoder_Count += 1;	//每当定时器4的周期到达时，Encoder_Count变量加1，这样就可以统计定时器4的周期数了}
+  }
+}
 /* USER CODE END 4 */
 
 /**
