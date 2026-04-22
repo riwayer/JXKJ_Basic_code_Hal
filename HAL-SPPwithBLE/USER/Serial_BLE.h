@@ -5,6 +5,8 @@
 #include "usart.h"
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
 
 extern uint8_t BlueSerial_TxPacket[4];
 extern uint8_t BlueSerial_RxPacket[50];

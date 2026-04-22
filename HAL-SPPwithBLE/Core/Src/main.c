@@ -113,10 +113,27 @@ int main(void)
   BlueSerial_Printf("[display,0,20,a:%f]", x);
   while (1)
   {
-    x += 0.1;
-		y_1 = sin(x);
-		y_2 = cos(x);
-		printf("[plot,%.2f,%.2f]\r\n", y_1, y_2);//可以打印出里面的数据，但是要隔一段时间才可以一起显示。
+    // x += 0.1;
+		// y_1 = sin(x);
+		// y_2 = cos(x);
+		// printf("[plot,%.2f,%.2f]\r\n", y_1, y_2);//可以打印出里面的数据，但是要隔一段时间才可以一起显示。
+    
+    char *Tag = strtok((char *)BlueSerial_RxPacket, ",");
+    if (strcmp(Tag, "key") == 0)
+    {
+      char *Name = strtok(NULL, ",");
+      char *Action = strtok(NULL, ",");
+      
+      if (strcmp(Name, "1") == 0 && strcmp(Action, "up") == 0)
+      {
+        printf("key,1,up\r\n");
+      }
+      else if (strcmp(Name, "2") == 0 && strcmp(Action, "down") == 0)
+      {
+        printf("key,2,down\r\n");
+      }
+    }
+
     OLED_Updata();
 
     if (BlueSerial_RxFlag == 1)					//蓝牙串口收到一个方括号包裹的文本数据包
