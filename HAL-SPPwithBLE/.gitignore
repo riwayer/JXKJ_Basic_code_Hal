@@ -1,0 +1,13 @@
+build
+mx.scratch
+!.settings
+.vscode
+
+*.json
+*.txt
+*.ioc
+*.s
+*.ld
+
+.clangd
+.mxproject
